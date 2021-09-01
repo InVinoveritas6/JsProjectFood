@@ -56,22 +56,22 @@ window.addEventListener('DOMContentLoaded', () => {
    }
 
    function getZiro(num) {
-      if ( num >= 0 && num< 10){
+      if (num >= 0 && num < 10) {
          return `0${num}`;
       } else {
          return num;
       }
    }
-   
+
    function setClock(selector, endtime) {
       const timer = document.querySelector(selector),
-            days = timer.querySelector('#days'),
-            hours = timer.querySelector('#hours'),
-            minutes = timer.querySelector('#minutes'),
-            seconds = timer.querySelector('#seconds'),
-            timeInterval = setInterval(updateclock, 1000);
+         days = timer.querySelector('#days'),
+         hours = timer.querySelector('#hours'),
+         minutes = timer.querySelector('#minutes'),
+         seconds = timer.querySelector('#seconds'),
+         timeInterval = setInterval(updateclock, 1000);
 
-      updateclock();      
+      updateclock();
 
       function updateclock() {
          const t = getTimeRemening(endtime);
@@ -80,14 +80,48 @@ window.addEventListener('DOMContentLoaded', () => {
          hours.innerHTML = getZiro(t.hours);
          minutes.innerHTML = getZiro(t.minutes);
          seconds.innerHTML = getZiro(t.seconds);
-         
+
          if (t.total <= 0) {
-               clearInterval(timeInterval);
+            clearInterval(timeInterval);
          }
       }
    }
 
-setClock('.timer', deadLine);
+   setClock('.timer', deadLine);
 
 
+   //Modal
+
+   const modalTrigger = document.querySelectorAll('[data-modal]'),
+      modal = document.querySelector('.modal'),
+      modalCloseBtn = document.querySelector('[data-close]');
+
+   modalTrigger.forEach(btn =>
+      btn.addEventListener('click', () => {
+         modal.classList.add('show');
+         modal.classList.remove('hide');
+         document.body.style.overflow = 'hidden';
+      })
+
+   );
+
+   function closeModal () {
+      modal.classList.add('hide');
+      modal.classList.remove('show');
+      document.body.style.overflow = '';
+   }
+
+   modalCloseBtn.addEventListener('click', closeModal());
+
+   modal.addEventListener('click', (e) =>{
+      if(e.target === modal) {
+         closeModal();
+      }
+   });
+
+   document.addEventListener('keydown', (e)=>{
+      if (e.code === "Escape" && modal.classList == 'modal show') {
+         closeModal();
+      }
+   });
 });
