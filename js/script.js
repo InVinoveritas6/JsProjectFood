@@ -206,4 +206,57 @@ window.addEventListener('DOMContentLoaded', () => {
       'big'
    ).render();
 
+   //Forms
+
+   const forms = document.querySelectorAll('form');
+
+   const messenge = {
+      loading: "Загрузка",
+      success: "Спасибо! Ьы с вами свяжемся",
+      failure: "Что-то пошло не так"
+   };
+
+   forms.forEach(item => {
+      postData(item);
+   })
+
+   function postData(form) {
+      form.addEventListener('submit', (e) => {
+         e.preventDefault();
+
+         const statusMessenge = document.createElement('div');
+         statusMessenge.classList.add('status');
+         statusMessenge.textContent = messenge.loading;
+         form.append(statusMessenge)
+
+         const request = new XMLHttpRequest();
+
+         request.open('POST', 'server.php');
+         request.setRequestHeader('Context-type', 'application.json');
+
+         const formData = new FormData(form);
+
+         const object = {};
+         formData.forEach(function (value, key) {
+            object[key] = value;
+         });
+
+         const objectJSON = JSON.stringify(object);
+
+         request.send(objectJSON);
+         request.addEventListener('load', () => {
+            if (request.status === 200) {
+               console.log(request.response);
+               statusMessenge.textContent = messenge.success;
+               form.reset();
+               setTimeout(() => {
+                  statusMessenge.remove();
+               }, 2000);
+            } else {
+               statusMessenge.textContent = messenge.failure;
+            }
+         });
+      });
+   }
+
 });
