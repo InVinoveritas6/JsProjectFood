@@ -229,32 +229,36 @@ window.addEventListener('DOMContentLoaded', () => {
          margin: 0 auto;
          `;
          form.insertAdjacentElement('afterend', statusMessenge);
-         const request = new XMLHttpRequest();
 
-         request.open('POST', 'server.php');
-         request.setRequestHeader('Context-type', 'application.json');
+         // request.setRequestHeader();
 
          const formData = new FormData(form);
 
          const object = {};
+
          formData.forEach(function (value, key) {
             object[key] = value;
          });
 
-         const objectJSON = JSON.stringify(object);
 
-         request.send(objectJSON);
-         request.addEventListener('load', () => {
-            if (request.status === 200) {
-               console.log(request.response);
-               showThanksModal(messenge.success);
-               form.reset();
-               statusMessenge.remove();
+         fetch('server.php', {
+            method: "POST",
+            headres: {
+               'Context-type': 'application.json'
+            },
+            body: JSON.stringify(object)
 
-            } else {
-               showThanksModal(messenge.failure);
-            }
+         }).then(data => data.text())
+         .then(data => {
+            console.log(data);
+            showThanksModal(messenge.success);
+            statusMessenge.remove();
+         }).catch(() => {
+            showThanksModal(messenge.failure);
+         }).finally(() => {
+            form.reset();
          });
+
       });
    }
 
@@ -284,6 +288,19 @@ window.addEventListener('DOMContentLoaded', () => {
          closeModal();
       }, 4000);
 
+
    }
+   // fetch('https://jsonplaceholder.typicode.com/posts', {
+   //       method: "POST",
+   //       body: JSON.stringify({
+   //          name: "Alex"
+   //       }),
+   //       headers: {
+   //          'Content-type': 'application/json'
+   //       }
+   //    })
+   //    .then(response => response.json())
+   //    .then(json => console.log(json))
+
 
 });
